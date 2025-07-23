@@ -4,11 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activities.FragmentManager.CategoriesFragment">
 
+    <!-- Search Bar -->
+    <androidx.appcompat.widget.SearchView
+        android:elevation="10dp"
+        android:id="@+id/SearchView"
+        app:searchIcon="@drawable/search2"
+        android:backgroundTint="@color/colorCard"
+        android:background="@drawable/bcapplybtn2"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        app:closeIcon="@drawable/close"
+        app:queryBackground="@android:color/transparent"
+        app:iconifiedByDefault="false"
+        android:theme="@style/CustomSearchViewStyle"
+        android:windowSoftInputMode="stateHidden"
+        app:queryHint="Search wallpapers.."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Categories RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:elevation="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_below="@id/SearchView"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
@@ -16,6 +38,81 @@
         android:id="@+id/categoryRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <!-- Search Results RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:elevation="10dp"
+        android:layout_below="@id/SearchView"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        android:id="@+id/searchResultsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Loading State -->
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/Loading"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/humansearching"
+            android:layout_width="50dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="50dp"
+            app:tint="@color/colorGray" />
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_width="200dp"
+            app:indicatorColor="@color/colorWhite"
+            android:indeterminate="true"
+            android:id="@+id/progress"
+            app:trackCornerRadius="10dp"
+            android:layout_marginEnd="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="10dp"
+            app:trackColor="#36121318"
+            app:trackThickness="10dp"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:textColor="@color/colorGray"
+            android:text="Searching wallpapers..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <!-- No Results State -->
+    <LinearLayout
+        android:id="@+id/NoResults"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/empty"
+            app:tint="@color/colorPrimary"
+            android:layout_margin="10dp"
+            android:scaleX="1.4"
+            android:scaleY="1.4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="5dp"
+            android:text="no results found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <!-- Shimmer Loading -->
     <com.facebook.shimmer.ShimmerFrameLayout
         android:elevation="10dp"
         android:id="@+id/WallpapersShimmer"

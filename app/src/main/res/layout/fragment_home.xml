@@ -6,63 +6,113 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activities.FragmentManager.WallpaperFragment">
 
-
-        <LinearLayout
-            android:layout_marginTop="15dp"
-            android:orientation="vertical"
+    <LinearLayout
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <!-- Carousel Container -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+            
+            <!-- Previous Button -->
+            <ImageView
+                android:id="@+id/btnPrevious"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/back"
+                android:background="@drawable/round"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"
+                android:alpha="0.8"/>
+            
+            <!-- RecyclerView for Wallpapers -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/featuredRecycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:id="@+id/SampleWallpapers"
-                android:layout_marginTop="30dp"
-                android:visibility="gone"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"/>
+            
+            <!-- Next Button -->
             <ImageView
-                android:src="@drawable/empty"
-                app:tint="@color/colorWhite"
-                android:alpha=".8"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center_horizontal"
-                android:visibility="gone"
-                android:id="@+id/load2"
-                android:layout_width="50dp"
-                android:layout_height="50dp"/>
-            <TextView
-                android:textColor="@color/colorWhite"
-                android:fontFamily="@font/medium"
-                android:gravity="center"
-                android:alpha=".8"
-                android:visibility="gone"
-                android:id="@+id/load1"
-                android:layout_margin="20dp"
-                android:text="we are working on adding more wallpapers, please check back later"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/WallpapersShimmer"
+                android:id="@+id/btnNext"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
+                android:src="@drawable/next"
+                android:background="@drawable/round"
+                android:padding="8dp"
+                android:visibility="visible"
+                android:clickable="true"
+                android:focusable="true"
+                android:alpha="0.8"/>
+        </RelativeLayout>
+        
+        <!-- Sample Wallpapers (for mockup data) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/SampleWallpapers"
+            android:layout_marginTop="30dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content"/>
+            
+        <!-- Empty State -->
+        <ImageView
+            android:src="@drawable/empty"
+            app:tint="@color/colorWhite"
+            android:alpha=".8"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:id="@+id/load2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+            
+        <!-- Loading Text -->
+        <TextView
+            android:textColor="@color/colorWhite"
+            android:fontFamily="@font/medium"
+            android:gravity="center"
+            android:alpha=".8"
+            android:visibility="gone"
+            android:id="@+id/load1"
+            android:layout_margin="20dp"
+            android:text="we are working on adding more wallpapers, please check back later"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+            
+        <!-- Shimmer Loading -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/WallpapersShimmer"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                    <include layout="@layout/shimmer_home_wallpapers"/>
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+                <include layout="@layout/shimmer_home_wallpapers"/>
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
-        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
