@@ -21,7 +21,7 @@ import java.util.List;
 public class FavAdapter extends RecyclerView.Adapter<FavAdapter.FeaturedViewHolder> {
 
     Activity context;
-    List<MyFavs> featuredModels;
+    public List<MyFavs> featuredModels;
 
     public FavAdapter(Activity context, List<MyFavs> featuredModels) {
         this.context = context;
