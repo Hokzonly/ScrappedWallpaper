@@ -78,7 +78,7 @@ public class WallpaperFragment extends Fragment {
         protected Void doInBackground(Void... voids) {
             try {
                 // Focus on the main URL first to get all wallpapers from that specific page
-                String mainUrl = "https://wallpapercave.com/cinnamoroll-iphone-wallpapers";
+                String mainUrl = "https://wallpapercave.com/africa-phone-wallpapers";
                 
                 Document doc = Jsoup.connect(mainUrl).userAgent("firefox").followRedirects(false).get();
                 Elements elements = doc.select("div#albumwp").select("div.wallpaper");
@@ -103,9 +103,9 @@ public class WallpaperFragment extends Fragment {
                 // If we need more wallpapers, add from additional sources
                 if (featuredModels.size() < 20) {
                     String[] additionalSources = {
-                        "https://wallpapercave.com/cinnamoroll-wallpapers",
-                        "https://wallpapercave.com/cinnamoroll-desktop-wallpapers",
-                        "https://wallpapercave.com/cinnamoroll-mobile-wallpapers"
+                        "https://wallpapercave.com/africa-wallpapers",
+                        "https://wallpapercave.com/africa-desktop-wallpapers",
+                        "https://wallpapercave.com/africa-mobile-wallpapers"
                     };
 
                     for (String source : additionalSources) {
