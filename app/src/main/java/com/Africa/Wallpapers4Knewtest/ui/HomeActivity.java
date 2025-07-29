@@ -22,14 +22,11 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.onesignal.Continue;
 import com.onesignal.OneSignal;
 import com.Africa.Wallpapers4Knewtest.MyUtils;
-import com.Africa.Wallpapers4Knewtest.config.RoomDatabase.MySavedCodes;
-import com.Africa.Wallpapers4Knewtest.config.RoomDatabase.MySavedCodesDataBse;
 import com.Africa.Wallpapers4Knewtest.databinding.ActivityHomeBinding;
 import com.Africa.Wallpapers4Knewtest.databinding.DialogExitBinding;
 import com.Africa.Wallpapers4Knewtest.databinding.DialogMenuBinding;
 import com.Africa.Wallpapers4Knewtest.databinding.DialogPrivacyBinding;
 import com.Africa.Wallpapers4Knewtest.databinding.DialogRateBinding;
-import com.Africa.Wallpapers4Knewtest.databinding.DialogRedeemBinding;
 import com.Africa.Wallpapers4Knewtest.ui.fr.FragmentAdapter;
 
 public class HomeActivity extends AppCompatActivity {
@@ -46,19 +43,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         boolean unlockAds = prefs.getBoolean("unlockAds", false);
-        if (unlockAds){
-            binding.Redeem.setVisibility(View.GONE);
-            binding.RedeemText.setVisibility(View.GONE);
-        }else {
-            binding.Redeem.setVisibility(View.GONE);
-            binding.RedeemText.setVisibility(View.GONE);
-        }
-        binding.Redeem.setOnClickListener(v -> {
-            ShowRedeem();
-        });
-        binding.RedeemText.setOnClickListener(v -> {
-            binding.Redeem.performClick();
-        });
         sharedPreferences = getSharedPreferences(MyUtils.SharedPrefName,MODE_PRIVATE);
         editor = sharedPreferences.edit();
         if (!sharedPreferences.getBoolean(MyUtils.OnesignalAccepted,false)){
@@ -132,46 +116,6 @@ public class HomeActivity extends AppCompatActivity {
         binding.Menu.setOnClickListener(v -> {
             ShowMenu();
         });
-    }
-
-    private void ShowRedeem() {
-        MySavedCodesDataBse savedCodesDataBse = MySavedCodesDataBse.getInstance(this.getApplicationContext());
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        DialogRedeemBinding dialogRedeemBinding = DialogRedeemBinding.inflate(getLayoutInflater());
-        bottomSheetDialog.setContentView(dialogRedeemBinding.getRoot());
-        bottomSheetDialog.show();
-        bottomSheetDialog.setCancelable(false);
-        dialogRedeemBinding.Redeem.setOnClickListener(v -> {
-            String enteredCode = dialogRedeemBinding.RedeemText.getText().toString().trim();
-            if (enteredCode.equals(MyUtils.mainResponse.getCpaAds().getCpaCode().toString().trim())) {
-                // Check if the code has already been used
-                if (savedCodesDataBse.favDao().isSaved(MyUtils.mainResponse.getCpaAds().getCpaCode()) == 1) {
-                    Toast.makeText(this, "Code already used", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Code is valid and hasn't been used before
-                    Toast.makeText(this, "Enjoy Ad-Free Experience for 1 day", Toast.LENGTH_SHORT).show();
-                    MySavedCodes mm = new MySavedCodes();
-                    mm.setCode(MyUtils.mainResponse.getCpaAds().getCpaCode());
-                    savedCodesDataBse.favDao().insertUser(mm);
-                    // Get the current time
-                    long currentTimeMillis = System.currentTimeMillis();
-                    // Save the unlock time and state in shared preferences
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("unlockAds", true);
-                    editor.putLong("unlockStartTime", currentTimeMillis); // Save the unlock start time
-                    editor.apply();
-                    bottomSheetDialog.dismiss();
-                    binding.Redeem.setVisibility(View.GONE);
-                    binding.RedeemText.setVisibility(View.GONE);
-                }
-            } else {
-                Toast.makeText(this, "Invalid code", Toast.LENGTH_SHORT).show();
-            }
-        });
-        dialogRedeemBinding.Close.setOnClickListener(v -> {
-            bottomSheetDialog.dismiss();
-        });
-
     }
 
     private void ShowMenu() {
