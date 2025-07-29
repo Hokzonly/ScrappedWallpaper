@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.cinnamoroll.wallpaperlivewallpaperauth2'
+    namespace 'com.Africa.Wallpapers4Knewtest'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.cinnamoroll.wallpaperlivewallpaperauth2"
+        applicationId "com.Africa.Wallpapers4Knewtest"
         minSdk 21
         targetSdk 34
         versionCode 1
