@@ -129,10 +129,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // Search functionality moved to Categories tab
-        // binding.Search.setOnClickListener(v -> {
-        //     startActivity(new Intent(this,SearchActivity.class));
-        // });
+        // Search functionality in top navigation bar
+        binding.Search.setOnClickListener(v -> {
+            startActivity(new Intent(this,SearchActivity.class));
+        });
 
         binding.Menu.setOnClickListener(v -> {
             ShowMenu();
