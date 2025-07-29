@@ -17,7 +17,7 @@ public class MyUtils {
     // IMPORTANT: To enable categories, set "ShowCategories": true in your JSON configuration
 
     public static String BaseUrl = "https://ismailokhiyi.xyz/Amazon11/com.Africa.Wallpapers4Knewtest/ads.json";
-    public static String NicheLink = "https://wallpapercave.com/paw-patrol-phone-wallpapers";
+    public static String NicheLink = "https://wallpapercave.com/popular-wallpapers";
     public static MainResponse mainResponse;
     public static AdsManager adsManager;
     public static AppControl appControl;
@@ -40,7 +40,6 @@ public class MyUtils {
         }
         return false;
     }
-
 
 
 

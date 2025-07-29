@@ -53,11 +53,11 @@ public class FeaturedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == ITEM_VIEW) {
             int pos2 = position - (position / ITEM_FEED_COUNT) - (position >= ITEM_FEED_COUNT ? 1 : 0);
-            ((FeaturedViewHolder) holder).setData(featuredModels.get(pos2));
+            if (pos2 < featuredModels.size() && featuredModels.get(pos2) != null) {
+                ((FeaturedViewHolder) holder).setData(featuredModels.get(pos2));
+            }
         } else if (holder.getItemViewType() == AD_VIEW) {
             AppManager.ShowAppNative(context, ((FeaturedAdapter.ViewHolderAds) holder).binding.nativeAdContainer);
-
-
         }
     }
 
@@ -71,6 +71,10 @@ public class FeaturedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
+        if (featuredModels == null || featuredModels.isEmpty()) {
+            return 0;
+        }
+        
         int wallpaperCount = featuredModels.size();
         int adCount = wallpaperCount / ITEM_FEED_COUNT; // Calculate number of ads
         int remainingItems = wallpaperCount % ITEM_FEED_COUNT; // Calculate remaining items after ads
@@ -89,6 +93,7 @@ public class FeaturedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public long getItemId(int position) {
         return position;
     }
+    
     public class ViewHolderAds extends RecyclerView.ViewHolder {
         NativeAdapterBinding binding;
 
@@ -96,10 +101,7 @@ public class FeaturedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super(itemView);
             binding = NativeAdapterBinding.bind(itemView);
         }
-
-
     }
-
 
     public class FeaturedViewHolder extends RecyclerView.ViewHolder {
         ItemHomeFeaturedBinding binding;
@@ -110,29 +112,28 @@ public class FeaturedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         void setData(FeaturedModel model) {
-            Glide.with(context)
-                .load(model.getWallpaperImage())
-                .centerCrop()
-                .placeholder(android.R.drawable.ic_menu_gallery)
-                .error(android.R.drawable.ic_menu_gallery)
-                .dontAnimate()
-                .into(binding.featuredImage);
-            
-            binding.getRoot().setOnClickListener(v -> {
-                AppManager.ShowInterstitial(context, new AppInterstitialListenerManager() {
-                    @Override
-                    public void onInterstitialClosed() {
-                        context.startActivity(new Intent(context, WallpaperApplyActivity.class)
-                                .putExtra("id", model.getWallpaperImage())
-                                .putExtra("image", model.getWallpaperImage())
-                                .putExtra("premium", model.isPremium())
-                        );
-                    }
+            if (model != null && model.getWallpaperImage() != null && !model.getWallpaperImage().isEmpty()) {
+                Glide.with(context)
+                    .load(model.getWallpaperImage())
+                    .centerCrop()
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_gallery)
+                    .dontAnimate()
+                    .into(binding.featuredImage);
+                
+                binding.getRoot().setOnClickListener(v -> {
+                    AppManager.ShowInterstitial(context, new AppInterstitialListenerManager() {
+                        @Override
+                        public void onInterstitialClosed() {
+                            context.startActivity(new Intent(context, WallpaperApplyActivity.class)
+                                    .putExtra("id", model.getWallpaperImage())
+                                    .putExtra("image", model.getWallpaperImage())
+                                    .putExtra("premium", model.isPremium())
+                            );
+                        }
+                    });
                 });
-            });
+            }
         }
     }
-
-
-
 }

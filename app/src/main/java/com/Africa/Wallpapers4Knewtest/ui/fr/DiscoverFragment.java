@@ -63,7 +63,11 @@ public class DiscoverFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Don't search on every character change to avoid too many requests
+                // Check if search is cleared
+                if (s.toString().trim().isEmpty()) {
+                    // Restore original categories
+                    restoreOriginalCategories();
+                }
             }
 
             @Override
@@ -76,11 +80,29 @@ public class DiscoverFragment extends Fragment {
                 String query = binding.searchInput.getText().toString().trim();
                 if (!query.isEmpty()) {
                     searchWallpapers(query);
+                } else {
+                    // If search is empty, restore original categories
+                    restoreOriginalCategories();
                 }
                 return true;
             }
             return false;
         });
+    }
+
+    private void restoreOriginalCategories() {
+        // Clear search results and show original categories
+        filteredCategories.clear();
+        filteredCategories.addAll(allCategories);
+        
+        if (categoryAdapter != null) {
+            categoryAdapter.updateCategories(filteredCategories);
+        }
+        
+        // Show the categories recycler and hide shimmer
+        binding.categoriesRecycler.setVisibility(View.VISIBLE);
+        binding.categoriesShimmer.setVisibility(View.GONE);
+        binding.categoriesShimmer.stopShimmer();
     }
 
     private void searchWallpapers(String query) {
@@ -106,17 +128,55 @@ public class DiscoverFragment extends Fragment {
             String query = queries[0];
             
             try {
+                // Search for wallpaper collections on wallpapercave
                 Document document = Jsoup.connect("https://wallpapercave.com/search?q=" + query.replace(" ", "+"))
-                        .userAgent("chrome")
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                         .followRedirects(true)
+                        .timeout(15000)
                         .get();
 
-                Elements elements = document.select("div#content").select("div#popular").select("a.albumthumbnail");
-                for (Element element : elements) {
+                // Look for wallpaper collections (albums)
+                Elements albumElements = document.select("div#content").select("div#popular").select("a.albumthumbnail");
+                
+                // Add wallpaper collections
+                for (Element element : albumElements) {
                     String categoryName = element.select("div.psc").select("p.title").text();
                     String categoryUrl = element.attr("href");
-                    searchResults.add(new CategoryModel(categoryName, categoryUrl));
+                    String categoryImage = element.select("div.albumphoto").select("img.thumbnail").attr("src");
+                    
+                    if (!categoryName.isEmpty()) {
+                        CategoryModel category = new CategoryModel(categoryName, categoryUrl);
+                        if (!categoryImage.isEmpty()) {
+                            if (!categoryImage.startsWith("http")) {
+                                categoryImage = "https://wallpapercave.com" + categoryImage;
+                            }
+                            category.setImageUrl(categoryImage);
+                        }
+                        searchResults.add(category);
+                    }
                 }
+                
+                // If no results from popular section, try other sections
+                if (searchResults.isEmpty()) {
+                    Elements allAlbumElements = document.select("div#content").select("a.albumthumbnail");
+                    for (Element element : allAlbumElements) {
+                        String categoryName = element.select("div.psc").select("p.title").text();
+                        String categoryUrl = element.attr("href");
+                        String categoryImage = element.select("div.albumphoto").select("img.thumbnail").attr("src");
+                        
+                        if (!categoryName.isEmpty()) {
+                            CategoryModel category = new CategoryModel(categoryName, categoryUrl);
+                            if (!categoryImage.isEmpty()) {
+                                if (!categoryImage.startsWith("http")) {
+                                    categoryImage = "https://wallpapercave.com" + categoryImage;
+                                }
+                                category.setImageUrl(categoryImage);
+                            }
+                            searchResults.add(category);
+                        }
+                    }
+                }
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -166,17 +226,12 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void loadCarouselData() {
-        // Add some sample wallpapers first to show immediately
-        carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com/wp/wp1234567.jpg", false));
-        carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com/wp/wp1234568.jpg", false));
-        carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com/wp/wp1234569.jpg", false));
-        
-        // Set up the adapter immediately
+        // Set up the adapter with empty list first
         carouselAdapter = new FeaturedAdapter(getActivity(), carouselWallpapers);
         binding.carouselRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.carouselRecycler.setAdapter(carouselAdapter);
         
-        // Load real wallpapers from the same source as main wallpapers
+        // Load real wallpapers from wallpapercave
         new LoadCarouselWallpapers().execute();
     }
 
@@ -184,17 +239,86 @@ public class DiscoverFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                Document doc = Jsoup.connect(MyUtils.NicheLink).userAgent("firefox").followRedirects(false).get();
-                Elements elements = doc.select("div#albumwp").select("div.wallpaper");
-
-                for (Element element : elements) {
-                    String img = element.select("img.wimg").attr("src");
-                    if (carouselWallpapers.size() < 10) { // Limit to 10 wallpapers for carousel
-                        carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com" + img, false));
+                // Use the NicheLink from MyUtils to get wallpapers
+                Document doc = Jsoup.connect(MyUtils.NicheLink)
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                        .followRedirects(true)
+                        .timeout(15000)
+                        .get();
+                
+                // Clear existing data first
+                carouselWallpapers.clear();
+                
+                // Look for wallpapers in the album
+                Elements wallpaperElements = doc.select("div#albumwp").select("div.wallpaper");
+                
+                // If no wallpapers found in albumwp, try other selectors
+                if (wallpaperElements.isEmpty()) {
+                    wallpaperElements = doc.select("div.wallpaper");
+                }
+                
+                // If still no wallpapers, try looking for any image links
+                if (wallpaperElements.isEmpty()) {
+                    wallpaperElements = doc.select("a[href*=/wp/]");
+                }
+                
+                for (Element element : wallpaperElements) {
+                    String imgSrc = "";
+                    
+                    // Try different ways to get the image source
+                    if (element.select("img.wimg").size() > 0) {
+                        imgSrc = element.select("img.wimg").attr("src");
+                    } else if (element.select("img").size() > 0) {
+                        imgSrc = element.select("img").attr("src");
+                    }
+                    
+                    if (!imgSrc.isEmpty()) {
+                        // Make sure the URL is complete
+                        if (!imgSrc.startsWith("http")) {
+                            imgSrc = "https://wallpapercave.com" + imgSrc;
+                        }
+                        
+                        // Add the wallpaper to the list
+                        carouselWallpapers.add(new FeaturedModel(imgSrc, false));
+                        
+                        // Limit to 20 wallpapers for carousel to avoid too many items
+                        if (carouselWallpapers.size() >= 20) {
+                            break;
+                        }
                     }
                 }
+                
+                // If we still don't have enough wallpapers, try a fallback source
+                if (carouselWallpapers.size() < 5) {
+                    Document doc2 = Jsoup.connect("https://wallpapercave.com/popular-wallpapers")
+                            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                            .followRedirects(true)
+                            .timeout(15000)
+                            .get();
+                    
+                    Elements elements2 = doc2.select("div.wallpaper");
+                    
+                    for (Element element : elements2) {
+                        String imgSrc = element.select("img.wimg").attr("src");
+                        if (!imgSrc.isEmpty()) {
+                            if (!imgSrc.startsWith("http")) {
+                                imgSrc = "https://wallpapercave.com" + imgSrc;
+                            }
+                            carouselWallpapers.add(new FeaturedModel(imgSrc, false));
+                            
+                            if (carouselWallpapers.size() >= 20) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                
             } catch (Exception e) {
                 e.printStackTrace();
+                // Add some fallback wallpapers if scraping fails
+                carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com/wp/wp1234567.jpg", false));
+                carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com/wp/wp1234568.jpg", false));
+                carouselWallpapers.add(new FeaturedModel("https://wallpapercave.com/wp/wp1234569.jpg", false));
             }
             return null;
         }
@@ -203,7 +327,7 @@ public class DiscoverFragment extends Fragment {
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
             if (isAdded()) {
-                // Update the existing adapter with new data
+                // Update the adapter with new data
                 if (carouselAdapter != null) {
                     carouselAdapter.notifyDataSetChanged();
                 }
@@ -219,7 +343,7 @@ public class DiscoverFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                Document doc = Jsoup.connect("https://wallpapercave.com/categories").userAgent("opera").get();
+                Document doc = Jsoup.connect("https://wallpapercave.com/categories").userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36").get();
                 Elements elements = doc.select("div#content").select("ul#catsinbox").select("li");
 
                 for (Element element : elements) {

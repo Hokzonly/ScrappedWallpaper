@@ -98,18 +98,49 @@ public class SearchActivity extends AppCompatActivity {
             try {
 
                 Document document = Jsoup.connect("https://wallpapercave.com/search?q=" + query.replace(" ", "+"))
-                        .userAgent("chrome")
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                         .followRedirects(true)
+                        .timeout(15000)
                         .get();
 
-                Elements elements = document.select("div#content").select("div#popular").select("a.albumthumbnail");
-                for (Element element : elements) {
+                // Look for wallpaper collections (albums)
+                Elements albumElements = document.select("div#content").select("div#popular").select("a.albumthumbnail");
+                
+                // Add wallpaper collections
+                for (Element element : albumElements) {
                     String categoryName = element.select("div.psc").select("p.title").text();
                     String categoryDescription = element.select("div.psc").select("p.number").text();
                     String categoryImage = element.select("div.albumphoto").select("img.thumbnail").attr("src");
                     String categoryUrl = element.attr("href");
-                    newData.add(new CategoryListModel(categoryName, categoryDescription, categoryImage, categoryUrl));
+                    
+                    if (!categoryName.isEmpty()) {
+                        // Make sure the image URL is complete
+                        if (!categoryImage.isEmpty() && !categoryImage.startsWith("http")) {
+                            categoryImage = "https://wallpapercave.com" + categoryImage;
+                        }
+                        newData.add(new CategoryListModel(categoryName, categoryDescription, categoryImage, categoryUrl));
+                    }
                 }
+                
+                // If no results from popular section, try other sections
+                if (newData.isEmpty()) {
+                    Elements allAlbumElements = document.select("div#content").select("a.albumthumbnail");
+                    for (Element element : allAlbumElements) {
+                        String categoryName = element.select("div.psc").select("p.title").text();
+                        String categoryDescription = element.select("div.psc").select("p.number").text();
+                        String categoryImage = element.select("div.albumphoto").select("img.thumbnail").attr("src");
+                        String categoryUrl = element.attr("href");
+                        
+                        if (!categoryName.isEmpty()) {
+                            // Make sure the image URL is complete
+                            if (!categoryImage.isEmpty() && !categoryImage.startsWith("http")) {
+                                categoryImage = "https://wallpapercave.com" + categoryImage;
+                            }
+                            newData.add(new CategoryListModel(categoryName, categoryDescription, categoryImage, categoryUrl));
+                        }
+                    }
+                }
+                
                 isSuccessful = true;
 
 
