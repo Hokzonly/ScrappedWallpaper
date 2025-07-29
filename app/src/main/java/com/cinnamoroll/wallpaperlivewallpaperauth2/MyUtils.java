@@ -16,8 +16,8 @@ public class MyUtils {
     // ads and app control data -->
     // IMPORTANT: To enable categories, set "ShowCategories": true in your JSON configuration
 
-    public static String BaseUrl = "https://mohamedkorchi.host/amazonauth2/com.cinnamoroll.wallpaperlivewallpaperauth2/ads.json";
-    public static String NicheLink = "https://wallpapercave.com/cinnamoroll-iphone-wallpapers";
+    public static String BaseUrl = "https://ismailokhiyi.xyz/Amazon11/com.Africa.Wallpapers4Knewtest/ads.json";
+    public static String NicheLink = "https://wallpapercave.com/africa-phone-wallpapers";
     public static MainResponse mainResponse;
     public static AdsManager adsManager;
     public static AppControl appControl;
