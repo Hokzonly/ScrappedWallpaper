@@ -17,9 +17,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.Africa.Wallpapers4Knewtest.adapters.CategoryAdapter;
+import com.Africa.Wallpapers4Knewtest.adapters.CategoryListAdapter;
 import com.Africa.Wallpapers4Knewtest.adapters.FeaturedAdapter;
 import com.Africa.Wallpapers4Knewtest.databinding.FragmentDiscoverBinding;
 import com.Africa.Wallpapers4Knewtest.models.CategoryModel;
+import com.Africa.Wallpapers4Knewtest.models.CategoryListModel;
 import com.Africa.Wallpapers4Knewtest.models.FeaturedModel;
 
 import org.jsoup.Jsoup;
@@ -31,14 +33,20 @@ import com.Africa.Wallpapers4Knewtest.MyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class DiscoverFragment extends Fragment {
     FragmentDiscoverBinding binding;
     List<CategoryModel> allCategories = new ArrayList<>();
     List<CategoryModel> filteredCategories = new ArrayList<>();
+    List<CategoryListModel> searchResults = new ArrayList<>();
     List<FeaturedModel> carouselWallpapers = new ArrayList<>();
     CategoryAdapter categoryAdapter;
+    CategoryListAdapter searchAdapter;
     FeaturedAdapter carouselAdapter;
+    boolean isSearchMode = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,17 +100,22 @@ public class DiscoverFragment extends Fragment {
 
     private void restoreOriginalCategories() {
         // Clear search results and show original categories
-        filteredCategories.clear();
-        filteredCategories.addAll(allCategories);
+        isSearchMode = false;
+        searchResults.clear();
         
-        if (categoryAdapter != null) {
-            categoryAdapter.updateCategories(filteredCategories);
+        if (searchAdapter != null) {
+            searchAdapter.clear();
         }
         
         // Show the categories recycler and hide shimmer
         binding.categoriesRecycler.setVisibility(View.VISIBLE);
         binding.categoriesShimmer.setVisibility(View.GONE);
         binding.categoriesShimmer.stopShimmer();
+        
+        // Update with original categories
+        if (categoryAdapter != null) {
+            categoryAdapter.updateCategories(filteredCategories);
+        }
     }
 
     private void searchWallpapers(String query) {
@@ -112,67 +125,60 @@ public class DiscoverFragment extends Fragment {
         binding.categoriesShimmer.startShimmer();
 
         // Clear previous results
-        filteredCategories.clear();
-        if (categoryAdapter != null) {
-            categoryAdapter.updateCategories(filteredCategories);
-        }
+        searchResults.clear();
+        isSearchMode = true;
 
-        // Search wallpapers like SearchActivity does
+        // Search wallpapers using the same logic as SearchActivity
         new SearchWallpapersTask().execute(query);
     }
 
-    private class SearchWallpapersTask extends AsyncTask<String, Void, List<CategoryModel>> {
+    private class SearchWallpapersTask extends AsyncTask<String, Void, List<CategoryListModel>> {
         @Override
-        protected List<CategoryModel> doInBackground(String... queries) {
-            List<CategoryModel> searchResults = new ArrayList<>();
+        protected List<CategoryListModel> doInBackground(String... queries) {
+            List<CategoryListModel> results = new ArrayList<>();
             String query = queries[0];
             
             try {
-                // Search for wallpaper collections on wallpapercave
                 Document document = Jsoup.connect("https://wallpapercave.com/search?q=" + query.replace(" ", "+"))
                         .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                         .followRedirects(true)
                         .timeout(15000)
                         .get();
 
-                // Look for wallpaper collections (albums)
+                // Look for wallpaper collections (albums) - same as SearchActivity
                 Elements albumElements = document.select("div#content").select("div#popular").select("a.albumthumbnail");
                 
                 // Add wallpaper collections
                 for (Element element : albumElements) {
                     String categoryName = element.select("div.psc").select("p.title").text();
-                    String categoryUrl = element.attr("href");
+                    String categoryDescription = element.select("div.psc").select("p.number").text();
                     String categoryImage = element.select("div.albumphoto").select("img.thumbnail").attr("src");
+                    String categoryUrl = element.attr("href");
                     
                     if (!categoryName.isEmpty()) {
-                        CategoryModel category = new CategoryModel(categoryName, categoryUrl);
-                        if (!categoryImage.isEmpty()) {
-                            if (!categoryImage.startsWith("http")) {
-                                categoryImage = "https://wallpapercave.com" + categoryImage;
-                            }
-                            category.setImageUrl(categoryImage);
+                        // Make sure the image URL is complete
+                        if (!categoryImage.isEmpty() && !categoryImage.startsWith("http")) {
+                            categoryImage = "https://wallpapercave.com" + categoryImage;
                         }
-                        searchResults.add(category);
+                        results.add(new CategoryListModel(categoryName, categoryDescription, categoryImage, categoryUrl));
                     }
                 }
                 
                 // If no results from popular section, try other sections
-                if (searchResults.isEmpty()) {
+                if (results.isEmpty()) {
                     Elements allAlbumElements = document.select("div#content").select("a.albumthumbnail");
                     for (Element element : allAlbumElements) {
                         String categoryName = element.select("div.psc").select("p.title").text();
-                        String categoryUrl = element.attr("href");
+                        String categoryDescription = element.select("div.psc").select("p.number").text();
                         String categoryImage = element.select("div.albumphoto").select("img.thumbnail").attr("src");
+                        String categoryUrl = element.attr("href");
                         
                         if (!categoryName.isEmpty()) {
-                            CategoryModel category = new CategoryModel(categoryName, categoryUrl);
-                            if (!categoryImage.isEmpty()) {
-                                if (!categoryImage.startsWith("http")) {
-                                    categoryImage = "https://wallpapercave.com" + categoryImage;
-                                }
-                                category.setImageUrl(categoryImage);
+                            // Make sure the image URL is complete
+                            if (!categoryImage.isEmpty() && !categoryImage.startsWith("http")) {
+                                categoryImage = "https://wallpapercave.com" + categoryImage;
                             }
-                            searchResults.add(category);
+                            results.add(new CategoryListModel(categoryName, categoryDescription, categoryImage, categoryUrl));
                         }
                     }
                 }
@@ -181,11 +187,11 @@ public class DiscoverFragment extends Fragment {
                 e.printStackTrace();
             }
             
-            return searchResults;
+            return results;
         }
 
         @Override
-        protected void onPostExecute(List<CategoryModel> results) {
+        protected void onPostExecute(List<CategoryListModel> results) {
             if (isAdded()) {
                 binding.categoriesShimmer.stopShimmer();
                 binding.categoriesShimmer.setVisibility(View.GONE);
@@ -195,13 +201,23 @@ public class DiscoverFragment extends Fragment {
                     binding.categoriesRecycler.setVisibility(View.GONE);
                     // You can add a TextView to show "No results found"
                 } else {
-                    // Show search results
-                    filteredCategories.clear();
-                    filteredCategories.addAll(results);
+                    // Show search results using CategoryListAdapter
+                    searchResults.clear();
+                    searchResults.addAll(results);
                     binding.categoriesRecycler.setVisibility(View.VISIBLE);
-                    if (categoryAdapter != null) {
-                        categoryAdapter.updateCategories(filteredCategories);
-                    }
+                    
+                    // Use CategoryListAdapter for search results (same as SearchActivity)
+                    searchAdapter = new CategoryListAdapter(requireActivity(), searchResults);
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                    gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int position) {
+                            int viewType = Objects.requireNonNull(binding.categoriesRecycler.getAdapter()).getItemViewType(position);
+                            return viewType == FeaturedAdapter.AD_VIEW ? 2 : 1;
+                        }
+                    });
+                    binding.categoriesRecycler.setLayoutManager(gridLayoutManager);
+                    binding.categoriesRecycler.setAdapter(searchAdapter);
                 }
             }
         }
