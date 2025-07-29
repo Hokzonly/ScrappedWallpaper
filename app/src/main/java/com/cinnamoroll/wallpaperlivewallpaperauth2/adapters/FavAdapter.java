@@ -55,7 +55,14 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.FeaturedViewHold
         }
 
         void setData(MyFavs model) {
-            Glide.with(context).load(model.getWallpaper().replace("/pwp/", "/wp/").replace("/fwp/", "/wp/").replace("/fuwp/", "/uwp/").replace("/dwp2x/", "/wp/")).into(binding.featuredImage);
+            Glide.with(context)
+                .load(model.getWallpaper().replace("/pwp/", "/wp/").replace("/fwp/", "/wp/").replace("/fuwp/", "/uwp/").replace("/dwp2x/", "/wp/"))
+                .centerCrop()
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery)
+                .dontAnimate()
+                .into(binding.featuredImage);
+            
             binding.getRoot().setOnClickListener(v -> {
                 // Direct navigation without ads
                 context.startActivity(new Intent(context, WallpaperApplyActivity.class)

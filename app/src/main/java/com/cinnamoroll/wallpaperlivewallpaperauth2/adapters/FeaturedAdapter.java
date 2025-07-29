@@ -110,7 +110,14 @@ public class FeaturedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         void setData(FeaturedModel model) {
-            Glide.with(context).load(model.getWallpaperImage()).into(binding.featuredImage);
+            Glide.with(context)
+                .load(model.getWallpaperImage())
+                .centerCrop()
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery)
+                .dontAnimate()
+                .into(binding.featuredImage);
+            
             binding.getRoot().setOnClickListener(v -> {
                 AppManager.ShowInterstitial(context, new AppInterstitialListenerManager() {
                     @Override

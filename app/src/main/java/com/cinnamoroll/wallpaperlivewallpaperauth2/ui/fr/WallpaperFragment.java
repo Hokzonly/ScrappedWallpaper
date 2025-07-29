@@ -127,6 +127,13 @@ public class WallpaperFragment extends Fragment {
                 }
 
                 Log.d("WallpaperFragment", "Total wallpapers loaded: " + featuredModels.size());
+                
+                // Log navigation button state
+                if (featuredModels.size() > 0) {
+                    Log.d("WallpaperFragment", "Navigation buttons will be shown");
+                } else {
+                    Log.d("WallpaperFragment", "No wallpapers loaded, navigation buttons will be hidden");
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -141,6 +148,11 @@ public class WallpaperFragment extends Fragment {
                 setupCarousel();
                 binding.WallpapersShimmer.stopShimmer();
                 binding.WallpapersShimmer.setVisibility(View.GONE);
+                
+                // Show navigation buttons if we have data
+                if (featuredModels.size() > 0) {
+                    updateNavigationButtons();
+                }
             } else {
                 Log.e("TAG", "onPostExecute: " + "Fragment not attached");
             }
@@ -160,6 +172,15 @@ public class WallpaperFragment extends Fragment {
         binding.featuredRecycler.setLayoutManager(gridLayoutManager);
         binding.featuredRecycler.setAdapter(adapter);
         binding.featuredRecycler.setHasFixedSize(true);
+        
+        // Add scroll listener to update navigation buttons
+        binding.featuredRecycler.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                updateNavigationButtons();
+            }
+        });
         
         // Setup navigation buttons for scrolling through all wallpapers
         setupNavigationButtons();
@@ -194,7 +215,7 @@ public class WallpaperFragment extends Fragment {
 
     private void updateNavigationButtons() {
         GridLayoutManager layoutManager = (GridLayoutManager) binding.featuredRecycler.getLayoutManager();
-        if (layoutManager != null) {
+        if (layoutManager != null && featuredModels.size() > 0) {
             int firstVisible = layoutManager.findFirstVisibleItemPosition();
             int lastVisible = layoutManager.findLastVisibleItemPosition();
             
@@ -203,6 +224,10 @@ public class WallpaperFragment extends Fragment {
             
             // Show/hide next button
             binding.btnNext.setVisibility(lastVisible < featuredModels.size() - 1 ? View.VISIBLE : View.GONE);
+        } else {
+            // Hide both buttons if no data
+            binding.btnPrevious.setVisibility(View.GONE);
+            binding.btnNext.setVisibility(View.GONE);
         }
     }
 

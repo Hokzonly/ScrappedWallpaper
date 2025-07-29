@@ -87,6 +87,9 @@ public class HomeActivity extends AppCompatActivity {
         binding.viewPager.setAdapter(fragmentAdapter);
         // Categories is now the first tab (position 0)
         binding.viewPager.setCurrentItem(0, false); // Always start with first tab
+        
+        // Disable ViewPager2 swiping to prevent accidental tab switching
+        binding.viewPager.setUserInputEnabled(false);
         new TabLayoutMediator(binding.tabLayout, binding.viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {

@@ -57,6 +57,11 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         try {
+            // Start shimmer loading immediately
+            binding.WallpapersShimmer.setVisibility(View.VISIBLE);
+            binding.WallpapersShimmer.startShimmer();
+            binding.categoryRecycler.setVisibility(View.GONE);
+            
             setupSearchView();
             new getCategoriesData().execute();
         } catch (Exception e) {
@@ -96,6 +101,17 @@ public class CategoriesFragment extends Fragment {
                 if (newText.isEmpty()) {
                     // Show categories when search is cleared
                     showCategories();
+                } else {
+                    // Hide categories when user starts typing
+                    binding.categoryRecycler.setVisibility(View.GONE);
+                    binding.searchResultsRecycler.setVisibility(View.GONE);
+                    binding.NoResults.setVisibility(View.GONE);
+                    
+                    // Clear previous search results
+                    if (searchAdapter != null) {
+                        searchResults.clear();
+                        searchAdapter.notifyDataSetChanged();
+                    }
                 }
                 return false;
             }
@@ -149,6 +165,12 @@ public class CategoriesFragment extends Fragment {
         binding.searchResultsRecycler.setVisibility(View.VISIBLE);
         binding.NoResults.setVisibility(View.GONE);
         
+        // Ensure shimmer is hidden
+        if (binding.WallpapersShimmer != null) {
+            binding.WallpapersShimmer.setVisibility(View.GONE);
+            binding.WallpapersShimmer.stopShimmer();
+        }
+        
         searchAdapter = new CategoryListAdapter(requireActivity(), searchResults);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -167,6 +189,12 @@ public class CategoriesFragment extends Fragment {
         binding.categoryRecycler.setVisibility(View.VISIBLE);
         binding.searchResultsRecycler.setVisibility(View.GONE);
         binding.NoResults.setVisibility(View.GONE);
+        
+        // Ensure shimmer is hidden when showing categories
+        if (binding.WallpapersShimmer != null) {
+            binding.WallpapersShimmer.setVisibility(View.GONE);
+            binding.WallpapersShimmer.stopShimmer();
+        }
     }
 
     private void showNoResults() {
@@ -174,6 +202,12 @@ public class CategoriesFragment extends Fragment {
         binding.categoryRecycler.setVisibility(View.GONE);
         binding.searchResultsRecycler.setVisibility(View.GONE);
         binding.NoResults.setVisibility(View.VISIBLE);
+        
+        // Ensure shimmer is hidden
+        if (binding.WallpapersShimmer != null) {
+            binding.WallpapersShimmer.setVisibility(View.GONE);
+            binding.WallpapersShimmer.stopShimmer();
+        }
     }
 
     public class getCategoriesData extends AsyncTask<Void,Void,Void> {
@@ -190,8 +224,11 @@ public class CategoriesFragment extends Fragment {
                         categoryModels.add(new CategoryModel(categoryName, categoryUrl));
                     }
                 }
+                
+                Log.d("CategoriesFragment", "Loaded " + categoryModels.size() + " categories");
 
             } catch (Exception e) {
+                Log.e("CategoriesFragment", "Error loading categories: " + e.getMessage());
                 e.printStackTrace();
             }
             return null;
@@ -201,14 +238,21 @@ public class CategoriesFragment extends Fragment {
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
             if (isAdded()) {
-                categoryAdapter = new CategoryAdapter(requireActivity(), categoryModels);
-                // Use 2 columns for better visual appeal
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                binding.categoryRecycler.setLayoutManager(gridLayoutManager);
-                binding.categoryRecycler.setAdapter(categoryAdapter);
-                binding.categoryRecycler.setVisibility(View.VISIBLE);
-                binding.WallpapersShimmer.setVisibility(View.GONE);
-                binding.WallpapersShimmer.stopShimmer();
+                if (categoryModels.size() > 0) {
+                    categoryAdapter = new CategoryAdapter(requireActivity(), categoryModels);
+                    // Use 2 columns for better visual appeal
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                    binding.categoryRecycler.setLayoutManager(gridLayoutManager);
+                    binding.categoryRecycler.setAdapter(categoryAdapter);
+                    binding.categoryRecycler.setVisibility(View.VISIBLE);
+                    binding.WallpapersShimmer.setVisibility(View.GONE);
+                    binding.WallpapersShimmer.stopShimmer();
+                } else {
+                    // If no categories loaded, show no results
+                    binding.WallpapersShimmer.setVisibility(View.GONE);
+                    binding.WallpapersShimmer.stopShimmer();
+                    binding.NoResults.setVisibility(View.VISIBLE);
+                }
             } else {
                 Log.e("TAG", "onPostExecute: " + "Fragment not attached");
             }
