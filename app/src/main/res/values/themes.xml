@@ -4,11 +4,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorSecondaryContainer">@color/colorSecondary</item>
         <item name="colorOnSecondaryContainer">@color/colorPrimary</item>
-        <item name="colorOnSurface">@color/colorPrimary</item>
+        <item name="colorOnSurface">@color/colorBlack</item>
         <item name="colorOnSurfaceVariant">@color/colorGray</item>
         <item name="colorSurfaceContainerHighest">@color/colorBackground</item>
-        <item name="colorOnPrimary">@color/colorBlack</item>
-        <item name="colorOnPrimaryContainer">@color/colorWhite</item>
+        <item name="colorOnPrimary">@color/colorWhite</item>
+        <item name="colorOnPrimaryContainer">@color/colorBlack</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/colorBackground</item>
         <item name="android:windowBackground">@color/colorBackground</item>
         <item name="android:fontFamily">@font/medium</item>
@@ -17,8 +17,8 @@
 
     </style>
     <style name="CustomSearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="android:editTextColor">@color/colorWhite</item>
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:editTextColor">@color/colorBlack</item>
+        <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textColorHint">@color/colorGray</item>
         <item name="iconTint">@color/colorPrimary</item>
         <item name="fontFamily">@font/medium</item>

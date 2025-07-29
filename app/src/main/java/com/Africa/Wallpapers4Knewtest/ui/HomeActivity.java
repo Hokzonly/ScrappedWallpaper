@@ -50,8 +50,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.Redeem.setVisibility(View.GONE);
             binding.RedeemText.setVisibility(View.GONE);
         }else {
-            binding.Redeem.setVisibility(View.VISIBLE);
-            binding.RedeemText.setVisibility(View.VISIBLE);
+            binding.Redeem.setVisibility(View.GONE);
+            binding.RedeemText.setVisibility(View.GONE);
         }
         binding.Redeem.setOnClickListener(v -> {
             ShowRedeem();
@@ -127,11 +127,6 @@ public class HomeActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 ShowExitDialog();
             }
-        });
-
-        // Search functionality in top navigation bar
-        binding.Search.setOnClickListener(v -> {
-            startActivity(new Intent(this,SearchActivity.class));
         });
 
         binding.Menu.setOnClickListener(v -> {

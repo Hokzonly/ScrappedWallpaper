@@ -5,9 +5,9 @@
     <color name="colorSecondary">#C17057</color>
     <color name="colorRed">#FF0000</color>
     <color name="colorPrimary">#FF5722</color>
-    <color name="colorBackground">#181512</color>
-    <color name="colorGray">#585860</color>
-    <color name="colorCard">#1E1E2C</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorGray">#666666</color>
+    <color name="colorCard">#F5F5F5</color>
 
 
 
