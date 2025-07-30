@@ -111,25 +111,75 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     private void startNewtonsCradleAnimation() {
-        // Create rotation animations for the first and last dots
-        dot1Animator = ObjectAnimator.ofFloat(binding.dot1, "rotation", 0f, 70f, 0f);
-        dot1Animator.setDuration(1200); // 1.2 seconds
+        // Create scale animations for a more visible loading effect
+        dot1Animator = ObjectAnimator.ofFloat(binding.dot1, "scaleX", 1f, 1.5f, 1f);
+        dot1Animator.setDuration(800);
         dot1Animator.setRepeatCount(ObjectAnimator.INFINITE);
         dot1Animator.setRepeatMode(ObjectAnimator.RESTART);
         dot1Animator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
 
-        dot4Animator = ObjectAnimator.ofFloat(binding.dot4, "rotation", 0f, -70f, 0f);
-        dot4Animator.setDuration(1200); // 1.2 seconds
+        ObjectAnimator dot1ScaleY = ObjectAnimator.ofFloat(binding.dot1, "scaleY", 1f, 1.5f, 1f);
+        dot1ScaleY.setDuration(800);
+        dot1ScaleY.setRepeatCount(ObjectAnimator.INFINITE);
+        dot1ScaleY.setRepeatMode(ObjectAnimator.RESTART);
+        dot1ScaleY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        dot4Animator = ObjectAnimator.ofFloat(binding.dot4, "scaleX", 1f, 1.5f, 1f);
+        dot4Animator.setDuration(800);
         dot4Animator.setRepeatCount(ObjectAnimator.INFINITE);
         dot4Animator.setRepeatMode(ObjectAnimator.RESTART);
         dot4Animator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
 
-        // Add a slight delay to dot4 to create the cradle effect
-        dot4Animator.setStartDelay(600);
+        ObjectAnimator dot4ScaleY = ObjectAnimator.ofFloat(binding.dot4, "scaleY", 1f, 1.5f, 1f);
+        dot4ScaleY.setDuration(800);
+        dot4ScaleY.setRepeatCount(ObjectAnimator.INFINITE);
+        dot4ScaleY.setRepeatMode(ObjectAnimator.RESTART);
+        dot4ScaleY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
 
-        // Start the animations
+        // Create animations for dots 2 and 3
+        ObjectAnimator dot2Animator = ObjectAnimator.ofFloat(binding.dot2, "scaleX", 1f, 1.5f, 1f);
+        dot2Animator.setDuration(800);
+        dot2Animator.setRepeatCount(ObjectAnimator.INFINITE);
+        dot2Animator.setRepeatMode(ObjectAnimator.RESTART);
+        dot2Animator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        ObjectAnimator dot2ScaleY = ObjectAnimator.ofFloat(binding.dot2, "scaleY", 1f, 1.5f, 1f);
+        dot2ScaleY.setDuration(800);
+        dot2ScaleY.setRepeatCount(ObjectAnimator.INFINITE);
+        dot2ScaleY.setRepeatMode(ObjectAnimator.RESTART);
+        dot2ScaleY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        ObjectAnimator dot3Animator = ObjectAnimator.ofFloat(binding.dot3, "scaleX", 1f, 1.5f, 1f);
+        dot3Animator.setDuration(800);
+        dot3Animator.setRepeatCount(ObjectAnimator.INFINITE);
+        dot3Animator.setRepeatMode(ObjectAnimator.RESTART);
+        dot3Animator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        ObjectAnimator dot3ScaleY = ObjectAnimator.ofFloat(binding.dot3, "scaleY", 1f, 1.5f, 1f);
+        dot3ScaleY.setDuration(800);
+        dot3ScaleY.setRepeatCount(ObjectAnimator.INFINITE);
+        dot3ScaleY.setRepeatMode(ObjectAnimator.RESTART);
+        dot3ScaleY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        // Add delays to create a wave effect
+        dot1Animator.setStartDelay(0);
+        dot1ScaleY.setStartDelay(0);
+        dot2Animator.setStartDelay(200);
+        dot2ScaleY.setStartDelay(200);
+        dot3Animator.setStartDelay(400);
+        dot3ScaleY.setStartDelay(400);
+        dot4Animator.setStartDelay(600);
+        dot4ScaleY.setStartDelay(600);
+
+        // Start all animations
         dot1Animator.start();
+        dot1ScaleY.start();
+        dot2Animator.start();
+        dot2ScaleY.start();
+        dot3Animator.start();
+        dot3ScaleY.start();
         dot4Animator.start();
+        dot4ScaleY.start();
     }
 
     @Override

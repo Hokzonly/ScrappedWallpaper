@@ -8,24 +8,14 @@
     android:background="@drawable/wallpaper"
     tools:context=".ui.LoadingActivity">
 
-    <!-- App Name -->
-    <TextView
-        android:text="@string/app_name"
-        android:textColor="@color/colorWhite"
-        android:gravity="center"
-        android:textSize="28sp"
-        android:fontFamily="@font/black"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
-
-    <!-- Newton's Cradle Animation -->
+    <!-- Newton's Cradle Animation at Bottom -->
     <LinearLayout
         android:id="@+id/newtonsCradleContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
         android:orientation="horizontal"
         android:gravity="center">
 
@@ -35,7 +25,8 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:background="@drawable/cradle_dot"
-            android:layout_marginEnd="6dp"/>
+            android:layout_marginEnd="6dp"
+            android:elevation="8dp"/>
 
         <!-- Dot 2 -->
         <View
@@ -43,7 +34,8 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:background="@drawable/cradle_dot"
-            android:layout_marginEnd="6dp"/>
+            android:layout_marginEnd="6dp"
+            android:elevation="8dp"/>
 
         <!-- Dot 3 -->
         <View
@@ -51,47 +43,18 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:background="@drawable/cradle_dot"
-            android:layout_marginEnd="6dp"/>
+            android:layout_marginEnd="6dp"
+            android:elevation="8dp"/>
 
         <!-- Dot 4 -->
         <View
             android:id="@+id/dot4"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:background="@drawable/cradle_dot"/>
+            android:background="@drawable/cradle_dot"
+            android:elevation="8dp"/>
 
     </LinearLayout>
-
-    <!-- Collection Text -->
-    <TextView
-        android:id="@+id/collectionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/newtonsCradleContainer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:text="1000+ Collection"
-        android:textColor="@color/colorWhite"
-        android:textSize="24sp"
-        android:fontFamily="@font/black"
-        android:shadowColor="#000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="4"
-        android:alpha="0.9"/>
-
-    <!-- Loading Text -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/collectionText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="Loading 4K Wallpapers..."
-        android:textColor="@color/colorWhite"
-        android:textSize="16sp"
-        android:fontFamily="@font/medium"
-        android:alpha="0.8"/>
 
     <!-- Error Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
