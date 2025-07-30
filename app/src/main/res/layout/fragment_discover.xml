@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Featured Wallpapers"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorWhite"
             android:textSize="20sp"
             android:fontFamily="@font/black"
             android:layout_marginBottom="12dp"/>
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Search Categories"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorWhite"
             android:textSize="20sp"
             android:fontFamily="@font/black"
             android:layout_marginBottom="12dp"/>
@@ -48,7 +48,7 @@
             android:layout_height="48dp"
             android:hint="Search wallpapers..."
             android:textColorHint="@color/colorGray"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorWhite"
             android:background="@drawable/search_background"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="All Categories"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorWhite"
             android:textSize="20sp"
             android:fontFamily="@font/black"
             android:layout_marginBottom="12dp"/>
