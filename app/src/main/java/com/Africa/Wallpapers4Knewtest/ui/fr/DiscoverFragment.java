@@ -1,10 +1,12 @@
 package com.Africa.Wallpapers4Knewtest.ui.fr;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,10 +94,21 @@ public class DiscoverFragment extends Fragment {
                     // If search is empty, restore original categories
                     restoreOriginalCategories();
                 }
+                // Hide the keyboard
+                hideKeyboard();
                 return true;
             }
             return false;
         });
+    }
+
+    private void hideKeyboard() {
+        if (getActivity() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(binding.searchInput.getWindowToken(), 0);
+            }
+        }
     }
 
     private void restoreOriginalCategories() {
