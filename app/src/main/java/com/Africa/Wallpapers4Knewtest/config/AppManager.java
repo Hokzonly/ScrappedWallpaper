@@ -734,11 +734,11 @@ public class AppManager {
         if (MyUtils.adsManager.isShowAds()) {
             normalClickCount++; // Increment click count
 
-            if (normalClickCount < 6) {
-                // Skip ad for the first 5 clicks
+            if (normalClickCount < MyUtils.adsManager.getMintegralClick()) {
+                // Skip ad for the first (MintegralClick-1) clicks
                 myInterstitialListener.onInterstitialClosed();
             } else {
-                // 6th click - show an ad
+                // MintegralClick-th click - show an ad
                 normalClickCount = 0; // Reset click count after showing ad
 
                 switch (MyUtils.adsManager.getInterstitialAds()) {

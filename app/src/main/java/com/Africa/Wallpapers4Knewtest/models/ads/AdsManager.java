@@ -52,6 +52,9 @@ public class AdsManager{
 	@Json(name = "AdmobClick")
 	private int admobClick;
 
+	@Json(name = "MintegralClick")
+	private int mintegralClick;
+
 	@Json(name = "BannerAds")
 	private String bannerAds;
 
@@ -117,6 +120,10 @@ public class AdsManager{
 
 	public int getAdmobClick(){
 		return admobClick;
+	}
+
+	public int getMintegralClick(){
+		return mintegralClick;
 	}
 
 	public String getBannerAds(){
